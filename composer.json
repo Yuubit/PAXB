@@ -1,10 +1,10 @@
 {
-    "name": "yuubit/PAXB",
+    "name": "yuubit/paxb",
     "type": "library",
     "description": "Public library PAXB - PHP Annotation Xml Binding, basic implementation of annotation driven xml binding",
     "keywords": ["xml", "binding", "marshalling"],
     "license": "MIT",
-    "version" : "1.0.0-alpha",
+    "version" : "1.0.0",
     "require": {
         "doctrine/common": "2.7.*"
     },
