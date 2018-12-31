@@ -1,5 +1,5 @@
 {
-    "name": "publib/PAXB",
+    "name": "yuubit/PAXB",
     "type": "library",
     "description": "Public library PAXB - PHP Annotation Xml Binding, basic implementation of annotation driven xml binding",
     "keywords": ["xml", "binding", "marshalling"],
@@ -22,10 +22,6 @@
         {
             "name": "Tomasz Ziółkowski",
             "email": "tomasz.ziolkowski@g.pl",
-            "role": "Developer"
-        }, {
-            "name": "Felix Marezki",
-            "email": "felix@yuubit.de",
             "role": "Developer"
         }
     ]
