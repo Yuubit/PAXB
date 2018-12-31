@@ -11,6 +11,7 @@ use PAXB\Xml\Binding\Metadata\ClassMetadataFactory;
 use PAXB\Xml\Binding\Structure\Attribute;
 use PAXB\Xml\Binding\Structure\Element;
 use PAXB\Xml\Marshalling\DOMDocumentMarshaller;
+use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -18,16 +19,16 @@ use PHPUnit_Framework_TestCase;
  * @covers ::__construct
  * @covers ::<!public>
  */
-class DOMDocumentMarshallerTest extends PHPUnit_Framework_TestCase {
+class DOMDocumentMarshallerTest extends TestCase {
 
     /**
      * @test
      * @covers ::marshall
+     * @expectedException \PAXB\Xml\Marshalling\MarshallingException
      */
     public function shouldThrowExceptionForMarshalingPrimitives() {
         $marshaller = new DOMDocumentMarshaller($this->getClassMetadataFactoryMock());
 
-        $this->setExpectedException('\PAXB\Xml\Marshalling\MarshallingException');
         $marshaller->marshall('123');
     }
 

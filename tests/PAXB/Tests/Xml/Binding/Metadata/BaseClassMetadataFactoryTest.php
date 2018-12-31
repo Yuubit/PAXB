@@ -3,13 +3,14 @@
 namespace PAXB\Tests\Xml\Binding\Metadata;
 
 use PAXB\Xml\Binding\Metadata\BaseClassMetadataFactory;
+use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_TestCase;
 
 /**
  * @coversDefaultClass  PAXB\Xml\Binding\BaseClassMetadataFactory
  * @covers ::__construct
  */
-class BaseClassMetadataFactoryTest extends PHPUnit_Framework_TestCase {
+class BaseClassMetadataFactoryTest extends TestCase {
 
     /**
      * @test

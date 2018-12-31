@@ -3,7 +3,6 @@
 namespace PAXB\Tests\Xml\Binding;
 
 use PAXB\Xml\Binding\AnnotationLoader;
-use PAXB\Xml\Binding\Annotations\XmlAnnotation;
 use PAXB\Xml\Binding\Annotations\XmlAttribute;
 use PAXB\Xml\Binding\Annotations\XmlElement;
 use PAXB\Xml\Binding\Annotations\XmlElementWrapper;
@@ -13,13 +12,14 @@ use PAXB\Xml\Binding\Annotations\XmlValue;
 use PAXB\Xml\Binding\Metadata\ClassMetadata;
 use PAXB\Xml\Binding\Structure\Attribute;
 use PAXB\Xml\Binding\Structure\Element;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @coversDefaultClass  PAXB\Xml\Binding\AnnotationLoader
  * @covers ::__construct
  * @covers ::<!public>
  */
-class AnnotationLoaderTest extends \PHPUnit_Framework_TestCase {
+class AnnotationLoaderTest extends TestCase {
 
     /**
      * @test
@@ -108,6 +108,7 @@ class AnnotationLoaderTest extends \PHPUnit_Framework_TestCase {
     /**
      * @test
      * @covers ::loadClassMetadata
+     * @expectedException \Doctrine\Common\Annotations\AnnotationException
      */
     public function shouldThrowExceptionIfXmlWrapperElementHasNoName() {
         $reader = $this->getReaderMock(
@@ -121,7 +122,6 @@ class AnnotationLoaderTest extends \PHPUnit_Framework_TestCase {
 
         $annotationLoader = new AnnotationLoader($reader);
 
-        $this->setExpectedException('\Doctrine\Common\Annotations\AnnotationException');
         $annotationLoader->loadClassMetadata($metadata);
     }
 
@@ -211,6 +211,7 @@ class AnnotationLoaderTest extends \PHPUnit_Framework_TestCase {
     /**
      * @test
      * @covers ::loadClassMetadata
+     * @expectedException \Doctrine\Common\Annotations\AnnotationException
      */
     public function shouldThrowExceptionIfXmlValueIsNotUnique() {
         $reader = $this->getReaderMock(
@@ -225,7 +226,6 @@ class AnnotationLoaderTest extends \PHPUnit_Framework_TestCase {
 
         $annotationLoader = new AnnotationLoader($reader);
 
-        $this->setExpectedException('\Doctrine\Common\Annotations\AnnotationException');
         $annotationLoader->loadClassMetadata($metadata);
     }
 
@@ -249,6 +249,7 @@ class AnnotationLoaderTest extends \PHPUnit_Framework_TestCase {
      * @test
      * @covers ::loadClassMetadata
      * @dataProvider notAllowedAnnotationCombinations
+     * @expectedException \Doctrine\Common\Annotations\AnnotationException
      */
     public function shouldThrowExceptionIfUsingSimultaneouslyNotAllowedAnnotations($annotationFirst, $annotationSecond) {
         $reader = $this->getReaderMock(
@@ -263,7 +264,6 @@ class AnnotationLoaderTest extends \PHPUnit_Framework_TestCase {
 
         $annotationLoader = new AnnotationLoader($reader);
 
-        $this->setExpectedException('\Doctrine\Common\Annotations\AnnotationException');
         $annotationLoader->loadClassMetadata($metadata);
     }
 

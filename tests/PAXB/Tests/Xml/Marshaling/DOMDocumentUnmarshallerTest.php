@@ -14,6 +14,7 @@ use PAXB\Xml\Binding\Metadata\ClassMetadataFactory;
 use PAXB\Xml\Binding\Structure\Attribute;
 use PAXB\Xml\Binding\Structure\Element;
 use PAXB\Xml\Marshalling\DOMDocumentUnmarshaller;
+use PHPUnit\Framework\TestCase;
 
 
 /**
@@ -21,11 +22,12 @@ use PAXB\Xml\Marshalling\DOMDocumentUnmarshaller;
  * @covers ::__construct
  * @covers ::<!public>
  */
-class DOMDocumentUnmarshallerTest extends \PHPUnit_Framework_TestCase {
+class DOMDocumentUnmarshallerTest extends TestCase {
 
     /**
      * @test
      * @covers ::unmarshall
+     * @expectedException \PAXB\Xml\Marshalling\UnmarshallingException
      */
     public function shouldThowExceptionIfMetadataRootNameIsNotEqualDocumentRootName() {
         $inputXml =  <<<EOD
@@ -44,7 +46,6 @@ EOD;
 
         $unmarshaller = new DOMDocumentUnmarshaller($classMetadataFactory);
 
-        $this->setExpectedException('PAXB\Xml\Marshalling\UnmarshallingException');
         $unmarshaller->unmarshall($inputXml, 'PAXB\Tests\Mocks\PrimitiveEntity');
     }
 
