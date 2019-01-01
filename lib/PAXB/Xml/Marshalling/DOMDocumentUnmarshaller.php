@@ -2,6 +2,7 @@
 
 namespace PAXB\Xml\Marshalling;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use PAXB\Xml\Binding\Metadata\ClassMetadata;
 use PAXB\Xml\Binding\Metadata\ClassMetadataFactory;
 use PAXB\Xml\Binding\Structure\Attribute;
@@ -102,7 +103,7 @@ class DOMDocumentUnmarshaller implements Unmarshaller {
                 if ($this->hasChild($node, $wrapperName)) {
                     $wrappers = $this->filterChildNodes($node, $wrapperName);
                     if (count($wrappers) > 1) {
-                        throw new UnmarshallingException('Found not unique wprappers ' . $wrapperName . ' inside ' . $node->nodeName);
+                        throw new UnmarshallingException('Found not unique wrappers ' . $wrapperName . ' inside ' . $node->nodeName);
                     }
 
                     $childNodes = $this->filterChildNodes($wrappers[0], $element->getName());
@@ -247,9 +248,9 @@ class DOMDocumentUnmarshaller implements Unmarshaller {
     ) {
         if (count($childNodes) > 0) {
             if (count($childNodes) > 1 || $element->getPhpCollection()) {
-                $fieldValue = array();
+                $fieldValue = new ArrayCollection();
                 foreach ($childNodes as $child) {
-                    $fieldValue[] = $this->getNodeElementValue($element, $child);
+                    $fieldValue->add($this->getNodeElementValue($element, $child));
                 }
             } else {
                 $fieldValue = null;

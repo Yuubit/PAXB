@@ -4,6 +4,7 @@
 namespace PAXB\Tests\Xml\Marshalling;
 
 
+use Doctrine\Common\Collections\ArrayCollection;
 use PAXB\Tests\Mocks\AttributeEntity;
 use PAXB\Tests\Mocks\ClassMetadataFactoryMock;
 use PAXB\Tests\Mocks\ComplexEntity;
@@ -83,7 +84,7 @@ EOD;
      */
     public function shouldGenerateProperXmlUsingProvidedClassMetadataForAttributeEntity() {
         $expectedEntity = new AttributeEntity();
-        $expectedEntity->setStringField(array('SomeValue1', 'SomeValue2'));
+        $expectedEntity->setStringField(new ArrayCollection(['SomeValue1', 'SomeValue2']));
         $expectedEntity->setAttributeField('SampleAttribute');
         $expectedEntity->setValueField('SampleRootValue');
 
@@ -118,7 +119,7 @@ EOD;
         $secondPrimitive = new PrimitiveEntity();
         $secondPrimitive->setStringField('Second');
         $expectedEntity = new ComplexEntity();
-        $expectedEntity->setPrimitives(array($firstPrimitive, $secondPrimitive));
+        $expectedEntity->setPrimitives(new ArrayCollection([$firstPrimitive, $secondPrimitive]));
 
         $inputXml =  <<<EOD
 <?xml version="1.0"?>
@@ -154,7 +155,7 @@ EOD;
         $primitive = new PrimitiveEntity();
         $primitive->setStringField('First');
         $expectedEntity = new PhpCollectionEntity();
-        $expectedEntity->setPrimitives(array($primitive));
+        $expectedEntity->setPrimitives(new ArrayCollection([$primitive]));
 
         $inputXml =  <<<EOD
 <?xml version="1.0"?>
