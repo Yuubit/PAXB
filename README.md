@@ -1,7 +1,7 @@
 # PAXB
 
 
-[![Build Status](https://travis-ci.org/Yuubit/PAXB.svg?branch=1.0.0-SNAPSHOT)](https://travis-ci.org/Yuubit/PAXB)
+[![Build Status](https://travis-ci.org/Yuubit/paxb.svg?branch=1.0.0-SNAPSHOT)](https://travis-ci.org/Yuubit/PAXB)
 
 PAXB - very basic implementation of annotation driven xml binding
 
