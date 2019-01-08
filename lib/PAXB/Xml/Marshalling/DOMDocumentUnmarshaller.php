@@ -248,9 +248,9 @@ class DOMDocumentUnmarshaller implements Unmarshaller {
     ) {
         if (count($childNodes) > 0) {
             if (count($childNodes) > 1 || $element->getPhpCollection()) {
-                $fieldValue = new ArrayCollection();
+                $fieldValue = [];
                 foreach ($childNodes as $child) {
-                    $fieldValue->add($this->getNodeElementValue($element, $child));
+                    $fieldValue[] = $this->getNodeElementValue($element, $child);
                 }
             } else {
                 $fieldValue = null;

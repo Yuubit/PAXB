@@ -84,7 +84,7 @@ EOD;
      */
     public function shouldGenerateProperXmlUsingProvidedClassMetadataForAttributeEntity() {
         $expectedEntity = new AttributeEntity();
-        $expectedEntity->setStringField(new ArrayCollection(['SomeValue1', 'SomeValue2']));
+        $expectedEntity->setStringField(['SomeValue1', 'SomeValue2']);
         $expectedEntity->setAttributeField('SampleAttribute');
         $expectedEntity->setValueField('SampleRootValue');
 
@@ -119,7 +119,7 @@ EOD;
         $secondPrimitive = new PrimitiveEntity();
         $secondPrimitive->setStringField('Second');
         $expectedEntity = new ComplexEntity();
-        $expectedEntity->setPrimitives(new ArrayCollection([$firstPrimitive, $secondPrimitive]));
+        $expectedEntity->setPrimitives([$firstPrimitive, $secondPrimitive]);
 
         $inputXml =  <<<EOD
 <?xml version="1.0"?>
@@ -155,7 +155,7 @@ EOD;
         $primitive = new PrimitiveEntity();
         $primitive->setStringField('First');
         $expectedEntity = new PhpCollectionEntity();
-        $expectedEntity->setPrimitives(new ArrayCollection([$primitive]));
+        $expectedEntity->setPrimitives([$primitive]);
 
         $inputXml =  <<<EOD
 <?xml version="1.0"?>
