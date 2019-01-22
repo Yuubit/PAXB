@@ -23,15 +23,17 @@ use PHPUnit\Framework\TestCase;
  * @covers ::__construct
  * @covers ::<!public>
  */
-class DOMDocumentUnmarshallerTest extends TestCase {
+class DOMDocumentUnmarshallerTest extends TestCase
+{
 
     /**
      * @test
      * @covers ::unmarshall
      * @expectedException \PAXB\Xml\Marshalling\UnmarshallingException
      */
-    public function shouldThowExceptionIfMetadataRootNameIsNotEqualDocumentRootName() {
-        $inputXml =  <<<EOD
+    public function shouldThowExceptionIfMetadataRootNameIsNotEqualDocumentRootName()
+    {
+        $inputXml = <<<EOD
 <?xml version="1.0"?>
 <primitive-entity><string-field>SomeValue</string-field></primitive-entity>
 
@@ -54,11 +56,12 @@ EOD;
      * @test
      * @covers ::unmarshall
      */
-    public function shouldGenerateProperXmlUsingProvidedClassMetadataForPrimitiveEntity() {
+    public function shouldGenerateProperXmlUsingProvidedClassMetadataForPrimitiveEntity()
+    {
         $expectedEntity = new PrimitiveEntity();
         $expectedEntity->setStringField('SomeValue');
 
-        $inputXml =  <<<EOD
+        $inputXml = <<<EOD
 <?xml version="1.0"?>
 <primitive-entity><string-field>SomeValue</string-field></primitive-entity>
 
@@ -82,13 +85,14 @@ EOD;
      * @test
      * @covers ::unmarshall
      */
-    public function shouldGenerateProperXmlUsingProvidedClassMetadataForAttributeEntity() {
+    public function shouldGenerateProperXmlUsingProvidedClassMetadataForAttributeEntity()
+    {
         $expectedEntity = new AttributeEntity();
         $expectedEntity->setStringField(['SomeValue1', 'SomeValue2']);
         $expectedEntity->setAttributeField('SampleAttribute');
         $expectedEntity->setValueField('SampleRootValue');
 
-        $inputXml =  <<<EOD
+        $inputXml = <<<EOD
 <?xml version="1.0"?>
 <attribute-entity attr="SampleAttribute"><string-field>SomeValue1</string-field><string-field>SomeValue2</string-field>SampleRootValue</attribute-entity>
 
@@ -113,7 +117,8 @@ EOD;
      * @test
      * @covers ::unmarshall
      */
-    public function shouldGenerateProperXmlUsingProvidedClassMetadataForComplexEntity() {
+    public function shouldGenerateProperXmlUsingProvidedClassMetadataForComplexEntity()
+    {
         $firstPrimitive = new PrimitiveEntity();
         $firstPrimitive->setStringField('First');
         $secondPrimitive = new PrimitiveEntity();
@@ -121,7 +126,7 @@ EOD;
         $expectedEntity = new ComplexEntity();
         $expectedEntity->setPrimitives([$firstPrimitive, $secondPrimitive]);
 
-        $inputXml =  <<<EOD
+        $inputXml = <<<EOD
 <?xml version="1.0"?>
 <complex-entity><primitives><primitive><stringField>First</stringField></primitive><primitive><stringField>Second</stringField></primitive></primitives></complex-entity>
 
@@ -151,13 +156,51 @@ EOD;
      * @test
      * @covers ::unmarshall
      */
-    public function shouldGenerateProperXmlUsingProvidedClassMetadataForPhpCollectionEntity() {
+    public function shouldGenerateProperXmlUsingProvidedClassMetadataForComplexEntity2()
+    {
+        $firstPrimitive = new PrimitiveEntity();
+        $firstPrimitive->setStringField('First');
+        $expectedEntity = new ComplexEntity();
+        $expectedEntity->setPrimitives([$firstPrimitive]);
+
+        $inputXml = <<<EOD
+<?xml version="1.0"?>
+<complex-entity><primitives><primitive><stringField>First</stringField></primitive></primitives></complex-entity>
+
+EOD;
+
+        $classMetadata = new ClassMetadata('\PAXB\Tests\Mocks\ComplexEntity');
+        $classMetadata->setName('complex-entity');
+        $classMetadata->addElement('primitives', new Element('primitive', Element::FIELD_SOURCE, ClassMetadata::DEFINED_TYPE, 'PAXB\Tests\Mocks\PrimitiveEntity', 'primitives', true));
+
+        $primitiveClassMetadata = new ClassMetadata('\PAXB\Tests\Mocks\PrimitiveEntity');
+        $primitiveClassMetadata->setName('primitive-entity');
+        $primitiveClassMetadata->addElement('stringField', new Element('stringField', ClassMetadata::RUNTIME_TYPE));
+
+        $classMetadataFactory = $this->getClassMetadataFactoryMock(
+            array(
+                'PAXB\Tests\Mocks\ComplexEntity' => $classMetadata,
+                'PAXB\Tests\Mocks\PrimitiveEntity' => $primitiveClassMetadata,
+            )
+        );
+
+        $marshaller = new DOMDocumentUnmarshaller($classMetadataFactory);
+
+        $this->assertEquals($expectedEntity, $marshaller->unmarshall($inputXml, 'PAXB\Tests\Mocks\ComplexEntity'));
+    }
+
+    /**
+     * @test
+     * @covers ::unmarshall
+     */
+    public function shouldGenerateProperXmlUsingProvidedClassMetadataForPhpCollectionEntity()
+    {
         $primitive = new PrimitiveEntity();
         $primitive->setStringField('First');
         $expectedEntity = new PhpCollectionEntity();
         $expectedEntity->setPrimitives([$primitive]);
 
-        $inputXml =  <<<EOD
+        $inputXml = <<<EOD
 <?xml version="1.0"?>
 <php-collection-entity><primitives><primitive><stringField>First</stringField></primitive></primitives></php-collection-entity>
 
