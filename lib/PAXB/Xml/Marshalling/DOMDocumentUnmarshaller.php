@@ -9,7 +9,8 @@ use PAXB\Xml\Binding\Structure\Attribute;
 use PAXB\Xml\Binding\Structure\Base;
 use PAXB\Xml\Binding\Structure\Element;
 
-class DOMDocumentUnmarshaller implements Unmarshaller {
+class DOMDocumentUnmarshaller implements Unmarshaller
+{
 
     /**
      * @var ClassMetadataFactory
@@ -39,7 +40,7 @@ class DOMDocumentUnmarshaller implements Unmarshaller {
         $rootElementName = $classMetadata->getName();
 
         if ($document->childNodes->item(0)->nodeName !== $rootElementName) {
-            throw new UnmarshallingException('Cannot found root element: '.$rootElementName);
+            throw new UnmarshallingException('Cannot found root element: ' . $rootElementName);
         }
 
         return $this->unmarshallObject($document->childNodes->item(0), $this->getNewEntity($classMetadata), $classMetadata);
@@ -47,8 +48,8 @@ class DOMDocumentUnmarshaller implements Unmarshaller {
 
 
     /**
-     * @param \DOMElement   $node
-     * @param Object        $object
+     * @param \DOMElement $node
+     * @param Object $object
      * @param ClassMetadata $classMetadata
      */
     private function unmarshallObject(\DOMElement $node, $object, ClassMetadata $classMetadata)
@@ -62,8 +63,8 @@ class DOMDocumentUnmarshaller implements Unmarshaller {
     }
 
     /**
-     * @param \DOMElement   $node
-     * @param Object        $object
+     * @param \DOMElement $node
+     * @param Object $object
      * @param ClassMetadata $classMetadata
      *
      * @throws UnmarshallingException
@@ -73,8 +74,7 @@ class DOMDocumentUnmarshaller implements Unmarshaller {
         /** @var Attribute $attribute */
         foreach ($classMetadata->getAttributes() as $fieldName => $attribute) {
             if (!$node->hasAttribute($attribute->getName())) {
-                throw new UnmarshallingException('Cannot found attribute ' . $attribute->getName(
-                ) . ' of node ' . $classMetadata->getName());
+                throw new UnmarshallingException('Cannot found attribute ' . $attribute->getName() . ' of node ' . $classMetadata->getName());
             }
 
             $this->setPropertyValue(
@@ -87,9 +87,9 @@ class DOMDocumentUnmarshaller implements Unmarshaller {
     }
 
     /**
-     * @param \DOMElement   $node
+     * @param \DOMElement $node
      * @param ClassMetadata $classMetadata
-     * @param Object        $object
+     * @param Object $object
      *
      * @throws UnmarshallingException
      */
@@ -117,8 +117,8 @@ class DOMDocumentUnmarshaller implements Unmarshaller {
     }
 
     /**
-     * @param \DOMElement   $node
-     * @param Object        $object
+     * @param \DOMElement $node
+     * @param Object $object
      * @param ClassMetadata $classMetadata
      */
     private function processValue(\DOMElement $node, $object, ClassMetadata $classMetadata)
@@ -140,9 +140,9 @@ class DOMDocumentUnmarshaller implements Unmarshaller {
 
     /**
      * @param \ReflectionProperty $property
-     * @param Base                $baseMetadata
-     * @param Object              $object
-     * @param mixed               $value
+     * @param Base $baseMetadata
+     * @param Object $object
+     * @param mixed $value
      *
      * @return mixed
      */
@@ -152,13 +152,13 @@ class DOMDocumentUnmarshaller implements Unmarshaller {
             $property->setAccessible(true);
             $property->setValue($object, $value);
         } else {
-            $object->{'set'.ucfirst($property->getName())}($value);
+            $object->{'set' . ucfirst($property->getName())}($value);
         }
     }
 
     /**
      * @param \DOMElement $node
-     * @param string      $childName
+     * @param string $childName
      *
      * @return \DOMElement[]
      */
@@ -167,7 +167,7 @@ class DOMDocumentUnmarshaller implements Unmarshaller {
         $result = array();
         if ($node->hasChildNodes()) {
             /** @var \DOMElement $childNode */
-            foreach($node->childNodes as $childNode) {
+            foreach ($node->childNodes as $childNode) {
                 if ($childNode->nodeName == $childName) {
                     $result[] = $childNode;
                 }
@@ -178,7 +178,7 @@ class DOMDocumentUnmarshaller implements Unmarshaller {
 
     /**
      * @param \DOMElement $node
-     * @param string      $childName
+     * @param string $childName
      *
      * @return bool
      */
@@ -186,7 +186,7 @@ class DOMDocumentUnmarshaller implements Unmarshaller {
     {
         if ($node->hasChildNodes()) {
             /** @var \DOMElement $childNode */
-            foreach($node->childNodes as $childNode) {
+            foreach ($node->childNodes as $childNode) {
                 if ($childNode->nodeName == $childName) {
                     return true;
                 }
@@ -207,7 +207,7 @@ class DOMDocumentUnmarshaller implements Unmarshaller {
     }
 
     /**
-     * @param Element     $element
+     * @param Element $element
      * @param \DOMElement $child
      *
      * @return mixed
@@ -231,11 +231,11 @@ class DOMDocumentUnmarshaller implements Unmarshaller {
     }
 
     /**
-     * @param Object        $object
+     * @param Object $object
      * @param ClassMetadata $classMetadata
      * @param \DOMElement[] $childNodes
-     * @param Element       $element
-     * @param string        $fieldName
+     * @param Element $element
+     * @param string $fieldName
      *
      * @return mixed
      */
@@ -245,7 +245,8 @@ class DOMDocumentUnmarshaller implements Unmarshaller {
         $childNodes,
         $element,
         $fieldName
-    ) {
+    )
+    {
         if (count($childNodes) > 0) {
             if (count($childNodes) > 1 || $element->getPhpCollection()) {
                 $fieldValue = [];
@@ -258,7 +259,7 @@ class DOMDocumentUnmarshaller implements Unmarshaller {
                 $fieldValue = $this->getNodeElementValue($element, $child);
             }
             $this->setPropertyValue(
-                $classMetadata->getReflection()->getProperty($fieldName),
+                $this->findProperty($classMetadata, $fieldName),
                 $element,
                 $object,
                 $fieldValue
@@ -269,7 +270,26 @@ class DOMDocumentUnmarshaller implements Unmarshaller {
     }
 
     /**
-     * @param string      $elementName
+     * @param ClassMetadata $classMetadata
+     * @param string $fieldName
+     * @return \ReflectionProperty|null
+     */
+    private function findProperty($classMetadata, $fieldName)
+    {
+        $property = null;
+        $reflection = $classMetadata->getReflection();
+
+        while ($property == null && $reflection !== false) {
+            if($reflection->hasProperty($fieldName)) {
+                return $reflection->getProperty($fieldName);
+            }
+
+            $reflection = $reflection->getParentClass();
+        }
+    }
+
+    /**
+     * @param string $elementName
      * @param \DOMElement $child
      *
      * @return mixed
@@ -278,7 +298,7 @@ class DOMDocumentUnmarshaller implements Unmarshaller {
     private function getScalarValueFromNode($elementName, $child)
     {
         if ($child->hasChildNodes()) {
-            if (count($child->childNodes)>1 || !($child->childNodes->item(0) instanceof \DOMText)){
+            if (count($child->childNodes) > 1 || !($child->childNodes->item(0) instanceof \DOMText)) {
                 throw new UnmarshallingException('Cannot unmarshal scalar ' . $elementName . ' as object');
             }
         }

@@ -74,7 +74,7 @@ class ClassMetadata {
     }
 
     /**
-     * @return \PAXB\Xml\Binding\Metadata\Element[]
+     * @return Element[]
      */
     public function getElements()
     {

@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use PAXB\Tests\Mocks\AttributeEntity;
 use PAXB\Tests\Mocks\ClassMetadataFactoryMock;
 use PAXB\Tests\Mocks\ComplexEntity;
+use PAXB\Tests\Mocks\ComplexInheritingEntity;
 use PAXB\Tests\Mocks\PhpCollectionEntity;
 use PAXB\Tests\Mocks\PrimitiveEntity;
 use PAXB\Xml\Binding\Metadata\ClassMetadata;
@@ -187,6 +188,45 @@ EOD;
         $marshaller = new DOMDocumentUnmarshaller($classMetadataFactory);
 
         $this->assertEquals($expectedEntity, $marshaller->unmarshall($inputXml, 'PAXB\Tests\Mocks\ComplexEntity'));
+    }
+
+    /**
+     * @test
+     * @covers ::unmarshall
+     */
+    public function shouldGenerateProperXmlUsingProvidedClassMetadataForComplexInheritingEntity()
+    {
+        $firstPrimitive = new PrimitiveEntity();
+        $firstPrimitive->setStringField('First');
+        $expectedEntity = new ComplexInheritingEntity();
+        $expectedEntity->setName("test");
+        $expectedEntity->setPrimitives([$firstPrimitive]);
+
+        $inputXml = <<<EOD
+<?xml version="1.0"?>
+<complex-entity><name>test</name><primitives><primitive><stringField>First</stringField></primitive></primitives></complex-entity>
+
+EOD;
+
+        $classMetadata = new ClassMetadata('\PAXB\Tests\Mocks\ComplexInheritingEntity');
+        $classMetadata->setName('complex-entity');
+        $classMetadata->addElement('primitives', new Element('primitive', Element::FIELD_SOURCE, ClassMetadata::DEFINED_TYPE, 'PAXB\Tests\Mocks\PrimitiveEntity', 'primitives', true));
+        $classMetadata->addElement('name', new Element('name', Element::GETTER_SOURCE, ClassMetadata::RUNTIME_TYPE));
+
+        $primitiveClassMetadata = new ClassMetadata('\PAXB\Tests\Mocks\PrimitiveEntity');
+        $primitiveClassMetadata->setName('primitive-entity');
+        $primitiveClassMetadata->addElement('stringField', new Element('stringField', ClassMetadata::RUNTIME_TYPE));
+
+        $classMetadataFactory = $this->getClassMetadataFactoryMock(
+            array(
+                'PAXB\Tests\Mocks\ComplexInheritingEntity' => $classMetadata,
+                'PAXB\Tests\Mocks\PrimitiveEntity' => $primitiveClassMetadata,
+            )
+        );
+
+        $marshaller = new DOMDocumentUnmarshaller($classMetadataFactory);
+
+        $this->assertEquals($expectedEntity, $marshaller->unmarshall($inputXml, ComplexInheritingEntity::class));
     }
 
     /**
